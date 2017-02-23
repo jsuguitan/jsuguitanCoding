@@ -1,0 +1,15 @@
+//How to compile both cpp file programs
+make
+
+//how to run part 1 of the project
+sbatch One-box.sh
+// the output of program file goes to "one_box.out"
+
+
+//how to run part 2 of the project
+sbatch Two_box.sh
+// the output of program file goes to "two_box.out"
+
+//how to run part 3 of the project
+sbatch Timing.sh
+// the output of program file goes to "timing.out"
