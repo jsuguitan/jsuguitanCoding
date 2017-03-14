@@ -1,0 +1,197 @@
+/*
+Jervyn Suguitan
+Mandelbrot Set
+Note: To hardcode the size of the image change the ints width and height
+width and height are found lines 65 and 66
+
+
+*/
+
+// Header Files
+#include <fstream>
+#include <cstring>
+#include <iostream>
+#include <stdlib.h>
+#include "mpi.h"
+#include "PIMFuncs.h"
+
+using namespace std;
+
+
+// Structs
+struct complex
+{
+    float real;
+    float imag;
+};
+
+// Function Prototypes
+int cal_pixel( complex c );
+
+// Main Program
+int main( int argc, char* argv[] )
+{
+    
+    // Initialize Program/Variables
+    int x, y, color, index, width, height;
+    double real_min, real_max, imag_min, imag_max, scale_real, scale_imag;
+    complex c;
+    double timeBegin = 0;
+    double timeEnd = 0;
+    double timeFinal = 0;
+    ofstream fout;
+    char * file;
+    unsigned char **pixels;
+    
+    //initialize so wtime can work
+    MPI_Init( &argc, &argv );
+
+    // Create the file
+    file = new char[20];
+    
+    // create a ppm file
+    strcpy( file, "output.ppm" );
+    fout.open( file );
+    fout.close();
+ 
+    
+    // Set the values of the mins/maxs, width, and height
+    real_min = -2.0;
+    real_max = 2.0;
+    imag_min = -2.0;
+    imag_max = 2.0;
+
+    // This is the size of the image. Hard code it for different sizes.
+    width = 16000;
+    height = 16000;
+    
+    // create pixel arrary
+    pixels = new unsigned char *[height];
+    
+    // Initialize pixels
+    for( index = 0; index < height; index++ )
+    {
+        pixels[ index ] = new unsigned char[ width ];
+    }
+     
+    // set scale
+    scale_real = ( real_max - real_min ) / width;
+    scale_imag = ( imag_max - imag_min ) / height;
+    
+    
+    //begin calculation time    
+    timeBegin = MPI_Wtime();
+
+    //the row that is worked on
+    for( x = 0; x < height; x++ )
+    {
+        // the pixel that is worked on based on the row
+        for( y = 0; y < width; y++ )
+        {
+            c.real = real_min + ( (float) y * scale_real );
+            
+            c.imag = imag_min + ( (float) x * scale_imag );
+            
+            color = cal_pixel( c );
+            
+            pixels[ x ] [ y ] = color;
+        }
+    }
+    //end calculation
+    timeEnd = MPI_Wtime();
+      
+    timeFinal = timeEnd - timeBegin;
+    cout << timeFinal;    
+
+    // diplay image function
+    pim_write_black_and_white( file, width, height, (const unsigned char**) pixels );
+}
+
+/**
+  * @name calPixel
+  *
+  * @brief Caluclates a pixel
+  *
+  * @details Texbook calculation of a pixel
+  *
+  * @pre arguemnts must exist
+  *
+  * @post The iterations is returned
+  *
+  * @par Algorithm
+  *      Use Textbook Equation
+  *
+  * @exception None
+  *
+  * @param[in] c
+  *            Imaginary and real portions of c
+  *
+  * @return # of iterations
+  *
+  * @note This function is defined in the textbook
+  */ 
+int cal_pixel( complex c )
+{
+    int count, max_iter;
+    complex z;
+    float temp, lengthsq;
+    
+    // Set variables
+    max_iter = 256;
+    z.real = 0;
+    z.imag = 0;
+    count = 0;
+    
+    // Loop Iteration
+    do
+    {
+        temp = z.real * z.real - z.imag * z.imag + c.real;
+        
+        z.imag = 2 * z.real * z.imag + c.imag;
+        
+        z.real = temp;
+        
+        lengthsq = z.real * z.real + z.imag * z.imag;
+        
+        count++;
+    } while( ( lengthsq < 4.0 ) &&  ( count < max_iter ) );
+       
+    return count;
+}
+   
+
+
+//how to put file into the headnode
+// scp pa01.cpp jsugutian@h1.cse.unr.edu:pa01.cpp
+
+//how to put folder into the headnode
+// scp -r folder jsuguitan@h1.cse.unr.edu:folder
+
+//how to compile
+// mpic++ -lpmi -o pa01 pa01.cpp
+// mpic++ -lpmi -o <executible> <cpp file>
+
+//how to output file back to normal terminal
+//scp filename ip_address:~
+
+//how to run
+// srun -n2 pa01
+// srun -<number of nodes> <executible
+// lowercse n makes it within the same box
+
+// srun -N2 pa01
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+

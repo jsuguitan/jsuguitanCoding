@@ -1,0 +1,21 @@
+//How to compile both cpp file programs
+make
+
+//how to run part 1 of the project
+sbatch seq.sh
+// the output of program file goes to "seqOut.out"
+// picture will be "output.ppm"
+
+// to change size of picture change lines 65 and 66 which is width and height
+
+//how to run part 2 of the project
+sbatch dynamic.sh
+// the output of program file goes to "dynamicTiming.out"
+// picture will be "dynamic.ppm"
+
+// to change number of processors you must change line 3  of dynamic.sh
+// to -n<# of processors>
+// next you must change line 51 and change it to the numbhher in the dynamic.sh file
+// the variable name in line 51
+// to change size of picture change lines 54 and 55 which is width and height
+
