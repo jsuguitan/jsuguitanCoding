@@ -12,3 +12,12 @@ sbatch seq.sh
 // the output of program file goes to "seqOut.out"
 
 //instructions to see the actual sorted array is in the src/sequential.cpp file
+
+
+//to run the parallel use
+
+sbatch dyn8.sh
+// the output dynamicTiming.out
+
+
+//information on how to print sorted array is on both parallel.cpp and sequential.cpp

@@ -42,7 +42,7 @@ int main( int argc, char* argv[] )
     //input numVales worth of ints into the file
     for( index = 0; index < numValues; index++ )
     {
-        fout << rand() % 10000 << " ";
+        fout << rand() % 1000000 << " ";
 
         //this if statement is used for spacing in the file
         if( index % 20 == 0 )

@@ -3,7 +3,7 @@ Jervyn Suguitan
 3-28
 Bucket Sort Sequential
 
-
+Set 38 to true if you want to print
 */
 
 
@@ -21,8 +21,7 @@ using namespace std;
 //function declarations
 void numToBucket( int*, int**, int*, int, int, int );
 void sortBuckets( int*, int  );
-
-
+void bubblesort( int[], int );
 int main( int argc, char* argv[] )
 {
     // Initialize Program/Variables
@@ -36,14 +35,13 @@ int main( int argc, char* argv[] )
     int **buckets = NULL;
     int *bucketIndex;
     int *finalHolder;
+    bool printValues = true;
 
     //initialize so wtime can work
     MPI_Init( &argc, &argv );
     
-    
-
     //biggest number in the sort
-    biggestVal = 10000;
+    biggestVal = 1000000;
 
     //read in file
     fin.open( argv[ 1 ] );
@@ -91,23 +89,34 @@ int main( int argc, char* argv[] )
     fin.close();
 
     cout << "timeFinal: " << timeFinal << endl;
+    
+
+
 
     //to see numbers sorted correctly uncomment the below cout statements
     for( int i = 0; i < numBuckets; i++ )
     {
+        //+ 1 because bucketIndex holds where the last one is inputted
         for( index = 0; index < bucketIndex[ i ] + 1; index ++ )
         {
             finalHolder[ inputIndex ] = buckets[ i ][ index ];
-            //cout << finalHolder[ inputIndex ] << " ";
-            inputIndex++;
             
-            //this if statement is just for readibilty and spacing
-            if( index % 20 == 0 )
+            
+            if( printValues )
             {
-                //cout << endl;
+                //this if statement is just for readibilty and spacing
+                cout << finalHolder[ inputIndex ] << " ";
+                if( inputIndex % 50 == 0 )
+                {
+                    cout << endl;
+                }
             }
+            inputIndex++;
         }
-        //cout << endl << endl;
+        if( printValues )
+        {
+            cout << endl << endl;
+        }    
     }
 
 }
@@ -115,7 +124,7 @@ int main( int argc, char* argv[] )
 
 
 
-//the biggest value is 10000
+//the biggest value is 1000000
 //holder contains all the numbers from the file
 //buckets is the buckets
 //bucketIndex has the number of ints in a bucket
@@ -135,16 +144,17 @@ void numToBucket( int* holder, int** buckets, int* bucketIndex, int numValues, i
         currentVal = holder[ index ];
         
         //determine working/currentBucket by using the currentVal
-        currentBucket = currentVal / ( biggestVal * .1 );
+        currentBucket = currentVal / ( biggestVal / numBuckets );
         
         //based on the currentBucket state that there will be + 1 int in the bucketbucket
-        bucketIndex[ currentBucket ]++;
+        bucketIndex[ currentBucket ] = bucketIndex[ currentBucket ] + 1;
         currentBucketIndex = bucketIndex[ currentBucket ];
     
         //input the current value into the correct bucket
         buckets[ currentBucket ][ currentBucketIndex ] = currentVal;
         
-    
+        //cout << currentBucket  << "CBI: " << currentBucketIndex << endl;
+        
     }
 
     //sort the buckets
@@ -152,15 +162,13 @@ void numToBucket( int* holder, int** buckets, int* bucketIndex, int numValues, i
     {
         sortBuckets( buckets[ index ], bucketIndex[ index ] );
     }
-
 }
 
 
 //sorts one bucket at a time
 void sortBuckets( int* buckets, int bucketIndex )
 {
-    int index = 0;
-    //if bucketIndex == 01 that means there are no ints in the bucket thus 
+    //if bucketIndex == -1 that means there are no ints in the bucket thus 
         //no need to sort anything
     if( bucketIndex == -1 )
     {
@@ -168,10 +176,32 @@ void sortBuckets( int* buckets, int bucketIndex )
     }
 
     //sorting algorithm from the algorithm library
-    sort( &buckets[ index ], &buckets[ bucketIndex + 1 ] );
+    //quicksort( buckets, index, bucketIndex - 1 );
+    bubblesort( buckets, bucketIndex );
 }
 
+void bubblesort( int input[], int n )
+{
+    int index = 0;
+    int holder;
+    bool hasSwitched = true;
+    while( hasSwitched )
+    {
+        hasSwitched = false;
+        for( index = 0; index < n - 1; index++ )
+        {
+            if( input[ index ] > input[ index + 1 ] )
+            {
+                holder = input[ index + 1 ];
+                input[ index + 1 ] = input[ index ];
+                input[ index ] = holder;
+                hasSwitched = true;
+            }
+        }
 
+    }
+
+}
 
 
 
