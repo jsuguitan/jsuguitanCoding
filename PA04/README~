@@ -23,6 +23,7 @@ if // you want to input your own matrix
 sbatch seq.sh
 // the output of program file goes to "seqOut.out"
 
+//instructions to see the actual sorted array is in the src/sequential.cpp file
 
 
 //to run the parallel use

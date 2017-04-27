@@ -1,0 +1,5 @@
+srun: Job step aborted: Waiting up to 2 seconds for job step to finish.
+srun: got SIGCONT
+slurmd[nxnode-0]: *** JOB 599 CANCELLED AT 2017-04-14T12:53:18 ***
+srun: forcing job termination
+slurmd[nxnode-0]: *** STEP 599.0 CANCELLED AT 2017-04-14T12:53:18 ***

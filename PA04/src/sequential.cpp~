@@ -19,50 +19,49 @@ Set 38 to true if you want to print
 using namespace std;
 
 //function declarations
-void multiply( int** matrix, int** otherM, int** finalM, int perfectSquare );
-void print( int** finalM, int perfectSquare );
+
+//input matrix values
+void getData( string filename, int &numRows, int** &holder, int** &secHolder, int** &finalMatrix );
+
+//zeroes out the complete matrix.  used for the sub matrixC
+void zeroOut( int** &matrix, int workingRows );
+
+//create space for 2D Matrix
+void create2DMatrix( int** &holder, int value );
+
+// multiples matrixA and matrixB and the result will be in matrixC
+void multiply( int** matrix, int** otherM, int** finalM, int numRows );
+
+//print given matirx
+void print( int** finalM, int numRows );
+
+
 int main( int argc, char* argv[] )
 {
     // Initialize Program/Variables
     double timeBegin = 0;
     double timeEnd = 0;
     double timeFinal = 0;
-    ifstream fin;
-    int index;
     int **matrix = NULL;
     int **otherM = NULL;
     int **finalM = NULL;
+    string filename = argv[ 1 ];
 
-    bool printValues = false;
+    bool printValues = true;
 
-    int perfectSquare = 1800;
+    int numRows;
 
     //initialize so wtime can work
     MPI_Init( &argc, &argv );
     
-
-    //create space for the buckets
-    matrix = new int*[ perfectSquare ];
-    otherM = new int*[ perfectSquare ];
-    finalM = new int*[ perfectSquare ];
-    for( index = 0; index < perfectSquare; index++ )
-    {
-        matrix[ index ] = new int[ perfectSquare ];
-        otherM[ index ] = new int[ perfectSquare ];
-        finalM[ index ] = new int[ perfectSquare ];
-        for( int i = 0; i < perfectSquare; i++ )
-        {
-            matrix[ index ][ i ] = i + 2;
-            otherM[ index ][ i ] = i + 2;
-            finalM[ index ][ i ] = 0;
-        }
-    } 
+//readin File, create space for the main matricies and input data from file
+    getData( filename, numRows, matrix, otherM, finalM );
 
 
     //start time
     timeBegin = MPI_Wtime();
 
-    multiply( matrix, otherM, finalM, perfectSquare );
+    multiply( matrix, otherM, finalM, numRows );
         
     //end time
     timeEnd = MPI_Wtime();
@@ -71,23 +70,25 @@ int main( int argc, char* argv[] )
     cout << "timeFinal: " << timeFinal << endl;
     if( printValues )
     {
-        print( finalM, perfectSquare );
+        print( finalM, numRows );
+
+        cout << endl << endl << "For more information about MatrixA and MatrixB Please Open up read in file" << endl;
     }
 
 }
 
 
 
-
-void multiply( int** matrix, int** otherM, int** finalM, int perfectSquare )
+// matrix multiplication code
+void multiply( int** matrix, int** otherM, int** finalM, int numRows )
 {
     int indexOut, index, indexIn;
 
-    for( indexOut = 0; indexOut < perfectSquare; indexOut++ )
+    for( indexOut = 0; indexOut < numRows; indexOut++ )
     {
-        for( index = 0; index < perfectSquare; index++ )
+        for( index = 0; index < numRows; index++ )
         {
-            for( indexIn = 0; indexIn < perfectSquare; indexIn++ )
+            for( indexIn = 0; indexIn < numRows; indexIn++ )
             {
                 finalM[ indexOut ][ index ] += matrix[ indexOut ][ indexIn ] * 
                                                     otherM[ indexIn ][ index ]; 
@@ -96,13 +97,13 @@ void multiply( int** matrix, int** otherM, int** finalM, int perfectSquare )
     }
 }
 
-void print( int** finalM, int perfectSquare )
+void print( int** finalM, int numRows )
 {
     int indexOut, index;
 
-    for( indexOut = 0; indexOut < perfectSquare; indexOut++ )
+    for( indexOut = 0; indexOut < numRows; indexOut++ )
     {
-        for( index = 0; index < perfectSquare; index++ )
+        for( index = 0; index < numRows; index++ )
         {
             cout << finalM[ indexOut ][ index ] << " ";
         }
@@ -112,6 +113,89 @@ void print( int** finalM, int perfectSquare )
 
 }
 
+
+/*
+Function that reads in a file, create space for the main matricies, and input
+    Data into those matricies.  The master will send these matricies to the 
+    slaves using MPI_Bcast.  They will send a row at a time
+*/
+
+void getData( string filename, int &numRows, int** &holder, 
+              int** &secHolder, int** &finalMatrix
+            )
+{
+    int buffer, index, indexIn;
+    fstream fin;
+
+    //open file
+    fin.open( filename.c_str() );
+
+    //input numRows
+    fin >> numRows;
+
+    //create space for main matricies
+    create2DMatrix( holder, numRows );
+    create2DMatrix( secHolder, numRows );
+    create2DMatrix( finalMatrix, numRows );
+
+    zeroOut( finalMatrix, numRows );
+
+    for( index = 0; index < numRows; index++ )
+    {
+        for( indexIn = 0; indexIn < numRows; indexIn++ )
+        {
+            //but into a buffer and input into Main matrixA
+            fin >> buffer;
+            holder[ index ][ indexIn ] = buffer;
+        }
+    }
+
+    for( index = 0; index < numRows; index++ )
+    {
+        for( indexIn = 0; indexIn < numRows; indexIn++ )
+        {
+            //but into a buffer and input into both Main matrixB
+            fin >> buffer;
+            secHolder[ index ][ indexIn ] = buffer;
+        }
+    }
+     
+
+}
+
+
+/*
+Creates space for a 2D Matrix with the first argument the double pointer
+    which we are working on, and the value being how large the matrix side will be
+*/
+void create2DMatrix( int** &holder, int value )
+{
+    //create space for rows
+    holder = new int*[ value ];
+
+    //create space for columns
+    for( int i = 0; i < value; i++ )
+    {
+        holder[ i ] = new int[ value ];
+    }
+    
+}
+
+/*
+    put zeroes out the whole matrix
+*/
+void zeroOut( int** &matrix, int workingRows )
+{
+    int index, indexIn;
+
+    for( index = 0; index < workingRows; index++ )
+    {
+        for( indexIn = 0; indexIn < workingRows; indexIn++ )
+        {
+            matrix[ index ][ indexIn ] = 0;
+        }
+    }
+}
 
 //how to put file into the headnode
 // scp pa01.cpp jsugutian@h1.cse.unr.edu:pa01.cpp
