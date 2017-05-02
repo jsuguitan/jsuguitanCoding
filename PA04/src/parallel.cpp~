@@ -58,7 +58,7 @@ void move_MatrixRowOrCol( int** matrix, int workingRows, int proSquared, int myR
 void moveHelper( int** &matrix, int** &temp, int workingRows, int myDest, int mySource, int currentRow );
 
 //zeroes out the complete matrix.  used for the sub matrixC
-void zeroOut( int** &matgrix, int workingRows );
+void zeroOut( int** &matrix, int workingRows );
 
 //basic matrix multiplication using 3 matricies
 void matrixMultiplication( int** &matrixA, int** &matrixB, int** &matrixC, int workingRows );
@@ -79,7 +79,7 @@ int main( int argc, char* argv[] )
     int indexBeginX, indexEndX, indexBeginY, indexEndY = 0; 
     int rowDest, colDest, rowSource, colSource, proSquared;
     string filename;
-    bool print = true;
+    bool print = false;
  
     //main Matricies and sub Matricies
     int** holder;

@@ -48,7 +48,7 @@ int main( int argc, char* argv[] )
         {
             fout << endl << endl << endl;
         }
-        fout << ( rand() % 9 ) + 1 << " ";
+        fout << ( rand() % 50 ) + 1 << " ";
 
         //fout << 2 << " ";
 

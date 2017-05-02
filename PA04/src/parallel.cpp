@@ -79,7 +79,7 @@ int main( int argc, char* argv[] )
     int indexBeginX, indexEndX, indexBeginY, indexEndY = 0; 
     int rowDest, colDest, rowSource, colSource, proSquared;
     string filename;
-    bool print = true;
+    bool print = false;
  
     //main Matricies and sub Matricies
     int** holder;

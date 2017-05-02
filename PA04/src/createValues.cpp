@@ -24,6 +24,8 @@ int main( int argc, char* argv[] )
     int index;
     int maxIndex;
     MPI_Init( &argc, &argv );
+    
+    srand( 0 );
 
     //read in file that has only 1 number
     fin.open( argv[ 1 ] );

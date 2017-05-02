@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH -n 1
+#SBATCH -n 4
 #SBATCH --tasks-per-node=8
-#SBATCH --output=seqOut.out
 #SBATCH --time=00:10:00
+#SBATCH --output=dynamicT1.out
 
-srun sequence int2640
+srun dynamic int
