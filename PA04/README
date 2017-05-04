@@ -1,20 +1,46 @@
 //How to compile both cpp file programs
 make
 
-//to run sequential and/or parallel project First
-//start with creating the textfile with the set amount of numbers by doing:
-sbatch create.sh
-//changing the number in the int2640 file will change how many rows and columns will be created
-//currently there will be 2640 rows and columns with there being 2640 ^ 2 numbers in the file 
-//  after running create.sh
+//how to run sequential without inputting matricies
+sbatch createA.sh
+sbatch createB.sh
+sbatch seq.sh
+
+//how to run parallel without inputting matricies
+sbatch createA.sh
+sbatch createB.sh
+sbatch dyn.sh
+
+
+
+
+
+
+What each .sh does
+
+
+createA.sh
+//puts in values into matrixA.  The number of values into matrixA is dependent on the first number of matrixA. i.e ) If the first number in file matrixA is 9.  9^2 numbers will put on the file
+
+
+createB.sh
+//puts in values into matrixB.  The number of values into matrixA is dependent on the first number of matrixB. i.e ) If the first number in file matrixA is 9.  9^2 numbers will put on the file
+
+
+The first number of matrixA and matrixB must be the same to make the matrix multiplication to work
+
 
 
 if // you want to input your own matrix 
         //either change the final word of the srun to
-        srun dynamic <Your File>    //for the parallel in dyn9.sh
-        srun sequence <Your File>   //for the sequential in seq.sh
+        
+        // in dyn.sh
+        srun dynamic <Your File1 > <Your File2 >  //for the parallel in dyn.sh
+        
+        // in seq.sh
+        srun sequence <Your File1 > <Your File2 >   //for the sequential in seq.sh
 
-        //or you can change the whats inside the int2640
+        //or you can change the whats inside the matrixA and matrixB
         Note: You must put how many rows will be used as the first number in the file
         
 
@@ -27,11 +53,11 @@ sbatch seq.sh
 
 //to run the parallel use
 
-sbatch dyn9.sh
+sbatch dyn.sh
 // the output dynamicTiming.out
 
 // to change how many processors used
-goto dyn9.sh 
+goto dyn.sh 
     change the 3rd line to the correct number of processors
 
 Note: processors number must be able to be square rooted
@@ -52,15 +78,12 @@ Below i how the file should look like on how to input your own matirx
 9 10 11 12
 13 14 15 16
 
-17 18 19 20
-21 22 23 24
-25 26 27 28
-29 30 31 32
+
 //////////////////////////////
 
 The 4 represents how many rows/columns there will be
 The 1st group of numbers is matrix A
-The 2nd group of numbers is matrix B
+
 
 
 

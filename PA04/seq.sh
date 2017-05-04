@@ -5,4 +5,4 @@
 #SBATCH --output=seqOut.out
 #SBATCH --time=00:10:00
 
-srun sequence int2640
+srun sequence matrixA matrixB

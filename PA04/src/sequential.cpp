@@ -21,7 +21,7 @@ using namespace std;
 //function declarations
 
 //input matrix values
-void getData( string filename, int &numRows, int** &holder, int** &secHolder, int** &finalMatrix );
+void getData( string fileOne, string fileTwo, int &numRows, int** &holder, int** &secHolder, int** &finalMatrix );
 
 //zeroes out the complete matrix.  used for the sub matrixC
 void zeroOut( int** &matrix, int workingRows );
@@ -45,7 +45,8 @@ int main( int argc, char* argv[] )
     int **matrix = NULL;
     int **otherM = NULL;
     int **finalM = NULL;
-    string filename = argv[ 1 ];
+    string fileOne = argv[ 1 ];
+    string fileTwo = argv[ 2 ];
 
     bool printValues = true;
 
@@ -55,7 +56,7 @@ int main( int argc, char* argv[] )
     MPI_Init( &argc, &argv );
     
 //readin File, create space for the main matricies and input data from file
-    getData( filename, numRows, matrix, otherM, finalM );
+    getData( fileOne, fileTwo, numRows, matrix, otherM, finalM );
 
 
     //start time
@@ -107,7 +108,7 @@ void print( int** finalM, int numRows )
         {
             cout << finalM[ indexOut ][ index ] << " ";
         }
-        cout << endl;
+        cout << endl << endl << endl;
     }
 
 
@@ -120,18 +121,21 @@ Function that reads in a file, create space for the main matricies, and input
     slaves using MPI_Bcast.  They will send a row at a time
 */
 
-void getData( string filename, int &numRows, int** &holder, 
+void getData( string fileOne, string fileTwo, int &numRows, int** &holder, 
               int** &secHolder, int** &finalMatrix
             )
 {
     int buffer, index, indexIn;
     fstream fin;
+    fstream finB;
 
     //open file
-    fin.open( filename.c_str() );
+    fin.open( fileOne.c_str() );
+    finB.open( fileTwo.c_str() );
 
     //input numRows
     fin >> numRows;
+    finB >> numRows;
 
     //create space for main matricies
     create2DMatrix( holder, numRows );
@@ -155,7 +159,7 @@ void getData( string filename, int &numRows, int** &holder,
         for( indexIn = 0; indexIn < numRows; indexIn++ )
         {
             //but into a buffer and input into both Main matrixB
-            fin >> buffer;
+            finB >> buffer;
             secHolder[ index ][ indexIn ] = buffer;
         }
     }
@@ -208,7 +212,7 @@ void zeroOut( int** &matrix, int workingRows )
 // mpic++ -lpmi -o <executible> <cpp file>
 
 //how to output file back to normal terminal
-//scp filename ip_address:~
+//scp fileOne ip_address:~
 
 //how to run
 // srun -n2 pa01

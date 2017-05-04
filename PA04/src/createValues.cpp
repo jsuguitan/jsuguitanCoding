@@ -42,17 +42,15 @@ int main( int argc, char* argv[] )
     fout << endl;
 
 
-    maxIndex = numValues * numValues * 2;
+    maxIndex = numValues * numValues;
     //input numVales worth of ints into the file
     for( index = 0; index < maxIndex ; index++ )
     {
-        if( index == maxIndex / 2 )
+        if( index == maxIndex )
         {
-            fout << endl << endl << endl;
+            fout << endl;
         }
         fout << ( rand() % 50 ) + 1 << " ";
-
-        //fout << 2 << " ";
 
         //this if statement is used for spacing in the file
         if( index % 100 == 0 && index > 0 )

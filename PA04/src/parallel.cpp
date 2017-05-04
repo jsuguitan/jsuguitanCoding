@@ -31,7 +31,7 @@ using namespace std;
 //Function Prototypes
 
 //input matrix values
-void getData( string filename, int &numRows, int** &holder, int** &secHolder, int** &finalMatrix, int myRank );
+void getData( string fileOne, string fileTwo, int &numRows, int** &holder, int** &secHolder, int** &finalMatrix, int myRank );
 
 //create space for 2D Matrix
 void create2DMatrix( int** &holder, int value );
@@ -78,8 +78,8 @@ int main( int argc, char* argv[] )
     int numRows, index, myRank, numProcessors, workingRows;
     int indexBeginX, indexEndX, indexBeginY, indexEndY = 0; 
     int rowDest, colDest, rowSource, colSource, proSquared;
-    string filename;
-    bool print = false;
+    string fileOne, fileTwo;
+    bool print = true;
  
     //main Matricies and sub Matricies
     int** holder;
@@ -104,11 +104,12 @@ int main( int argc, char* argv[] )
     MPI_Comm_size( MPI_COMM_WORLD, &numProcessors );
 
     
-    //set filename
-    filename = argv[ 1 ];
+    //set fileOne
+    fileOne = argv[ 1 ];
+    fileTwo = argv[ 2 ];
     
     //readin File, create space for the main matricies and input data from file
-    getData( filename, numRows, holder, secHolder, finalMatrix, myRank );
+    getData( fileOne, fileTwo, numRows, holder, secHolder, finalMatrix, myRank );
 
     //read in how many processors squared there are
     proSquared = sqrt( numProcessors );
@@ -261,18 +262,20 @@ Function that reads in a file, create space for the main matricies, and input
     slaves using MPI_Bcast.  They will send a row at a time
 */
 
-void getData( string filename, int &numRows, int** &holder, 
+void getData( string fileOne, string fileTwo, int &numRows, int** &holder, 
               int** &secHolder, int** &finalMatrix, int myRank 
             )
 {
     int buffer, index, indexIn;
     fstream fin;
-
+    fstream finB;
     //open file
-    fin.open( filename.c_str() );
+    fin.open( fileOne.c_str() );
+    finB.open( fileTwo.c_str() );
 
     //input numRows
     fin >> numRows;
+    finB >> numRows;    
 
     //create space for main matricies
     create2DMatrix( holder, numRows );
@@ -297,7 +300,7 @@ void getData( string filename, int &numRows, int** &holder,
             for( indexIn = 0; indexIn < numRows; indexIn++ )
             {
                 //but into a buffer and input into both Main matrixB
-                fin >> buffer;
+                finB >> buffer;
                 secHolder[ index ][ indexIn ] = buffer;
             }
         }

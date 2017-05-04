@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH -n 0
+#SBATCH -n 9
 #SBATCH --tasks-per-node=8
 #SBATCH --time=00:10:00
-#SBATCH --output=dynamicT1.out
+#SBATCH --output=dynamicTiming.out
 
-srun dynamic int
+srun dynamic matrixA matrixB
